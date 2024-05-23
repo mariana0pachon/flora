@@ -48,6 +48,8 @@ void loop() {
   limitSwitch3.loop();
 
   if (limitSwitch1.isPressed()) {
+    Serial.print("flor 1 se toco, ahora esta de color: ");
+    Serial.println(led1State);
 
     // enviar senal OSC de audio
 
@@ -64,6 +66,8 @@ void loop() {
   }
 
   if (limitSwitch2.isPressed()) {
+    Serial.print("flor 2 se toco, ahora esta de color: ");
+    Serial.println(led2State);
 
     // enviar senal OSC de audio
 
@@ -80,6 +84,8 @@ void loop() {
   }
 
   if (limitSwitch3.isPressed()) {
+    Serial.print("flor 3 se toco, ahora esta de color: ");
+    Serial.println(led3State);
 
     // enviar senal OSC de audio
 
