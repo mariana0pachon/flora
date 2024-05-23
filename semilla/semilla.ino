@@ -1,5 +1,7 @@
 int pinSensorHumedad = A0;
 int pinReleRio = 8;
+
+// Motor para primera flor que sube y baja
 int motorPin1 = 4;
 int motorPin2 = 2;
 
