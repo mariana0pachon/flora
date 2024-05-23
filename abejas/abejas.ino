@@ -1,45 +1,56 @@
 #include <FastLED.h>
+#include <ezButton.h>
 
-// Definimos los pines de los sensores piezoeléctricos
-const int piezoPin1 = A0;
-const int piezoPin2 = A1;
-const int piezoPin3 = A2;
+// *** PINES 2, 3, 4 ya estan cogidos para las LEDS ***
+
+// Motor para flores giratorias
+int motorPin1 = 10;
+int motorPin2 = 11;
+
+int pinBoton1 = 7;
+int pinBoton2 = 8;
+int pinBoton3 = 9;
+
+int debounceTime = 50;  // En milisegundos
+
+// Crear un ezButton object para cada uno de los limit switches
+ezButton limitSwitch1(pinBoton1);
+ezButton limitSwitch2(pinBoton2);
+ezButton limitSwitch3(pinBoton3);
 
 // Definimos las tiras de led que tienen 1 solo led
 CRGB leds1[1];
 CRGB leds2[1];
 CRGB leds3[1];
 
-// Estados de leds
-int piezo1State = 0;
-int prevPiezo1State = 0;
+// Estados de colores de leds
 String led1State = "black";
-
-int piezo2State = 0;
-int prevPiezo2State = 0;
 String led2State = "black";
-
-int piezo3State = 0;
-int prevPiezo3State = 0;
 String led3State = "black";
-
-int threshold = 80;
 
 void setup() {
   // Inicializamos los pines de los LEDs como salidas
-  FastLED.addLeds<NEOPIXEL, 2>(leds1, 1);
-  FastLED.addLeds<NEOPIXEL, 3>(leds2, 1);
-  FastLED.addLeds<NEOPIXEL, 4>(leds3, 1);
+  FastLED.addLeds<NEOPIXEL, 2>(leds1, 1);  // pin 2
+  FastLED.addLeds<NEOPIXEL, 3>(leds2, 1);  // pin 3
+  FastLED.addLeds<NEOPIXEL, 4>(leds3, 1);  // pin 4
 
-  // Configuramos los pines de los sensores piezoeléctricos como entradas
-  pinMode(piezoPin1, INPUT);
-  pinMode(piezoPin2, INPUT);
-  pinMode(piezoPin3, INPUT);
+  limitSwitch1.setDebounceTime(debounceTime);
+  limitSwitch2.setDebounceTime(debounceTime);
+  limitSwitch3.setDebounceTime(debounceTime);
+
+  pinMode(motorPin1, OUTPUT);
+  pinMode(motorPin2, OUTPUT);
 }
 
 void loop() {
-  piezo1State = analogRead(piezoPin1);
-  if (piezo1State > threshold && prevPiezo1State < 10) {
+  limitSwitch1.loop();
+  limitSwitch2.loop();
+  limitSwitch3.loop();
+
+  if (limitSwitch1.isPressed()) {
+
+    // enviar senal OSC de audio
+
     if (led1State == "black") {
       leds1[0] = CRGB::White;
       led1State = "white";
@@ -51,10 +62,11 @@ void loop() {
       led1State = "black";
     }
   }
-  prevPiezo1State = piezo1State;
 
-  piezo2State = analogRead(piezoPin2);
-  if (piezo2State > threshold && prevPiezo2State < 10) {
+  if (limitSwitch2.isPressed()) {
+
+    // enviar senal OSC de audio
+
     if (led2State == "black") {
       leds2[0] = CRGB::White;
       led1State = "white";
@@ -66,10 +78,11 @@ void loop() {
       led2State = "black";
     }
   }
-  prevPiezo2State = piezo2State;
 
-  piezo3State = analogRead(piezoPin3);
-  if (piezo3State > threshold && prevPiezo3State < 10) {
+  if (limitSwitch3.isPressed()) {
+
+    // enviar senal OSC de audio
+
     if (led3State == "black") {
       leds3[0] = CRGB::White;
       led3State = "white";
@@ -81,10 +94,14 @@ void loop() {
       led3State = "black";
     }
   }
-  prevPiezo3State = piezo3State;
 
   FastLED.show();
 
-  // Esperamos un breve periodo de tiempo antes de volver a leer los sensores
-  delay(100);
+  // Cuando las 3 leds esten en su estado final ya "polinizado" prender el motor de las flores giratorias
+  if (led1State == "red" && led2State == "red" && led3State == "red") {
+    // enviar senal OSC para el climax del audio
+
+    digitalWrite(motorPin1, HIGH);
+    digitalWrite(motorPin2, LOW);
+  }
 }
