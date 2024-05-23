@@ -1,7 +1,7 @@
 #include <SPI.h>
 #include <MFRC522.h>
 
-// los lectores RFID usan ademas los pines 13, 11, 12, 3.3V, GND
+// los lectores RFID comparten ademas los pines 13, 11, 12, 3.3V, GND
 
 #define SS_PIN_1 10
 #define RST_PIN_1 2
@@ -15,7 +15,7 @@ MFRC522 rfid2(SS_PIN_2, RST_PIN_2);
 #define RST_PIN_3 7
 MFRC522 rfid3(SS_PIN_3, RST_PIN_3);
 
-#define RELE_RIO_PIN 6 // CAMBIAR: tiene que ser otro q no este en uso
+#define RELE_RIO_PIN 8
 
 #define LUZ_1_PIN A0
 #define LUZ_2_PIN A1
@@ -23,12 +23,15 @@ MFRC522 rfid3(SS_PIN_3, RST_PIN_3);
 
 void setup() {
   Serial.begin(9600);
+
   SPI.begin();
+
   rfid1.PCD_Init();
   rfid2.PCD_Init();
   rfid3.PCD_Init();
 
-  // pinMode(RELE_RIO_PIN, OUTPUT);
+  pinMode(RELE_RIO_PIN, OUTPUT);
+  pinMode(LUZ_1_PIN, OUTPUT);
 }
 
 void loop() {
@@ -37,9 +40,9 @@ void loop() {
       Serial.println("primer nivel caracol");
 
       // enviar señal OSC para activar audio caracoles
-      
-      digitalWrite(RELE_RIO_PIN, HIGH);    // prender la bomba del rio nivel 2
-      digitalWrite(LUZ_1_PIN, HIGH);  // prender las luces nivel 1
+
+      digitalWrite(RELE_RIO_PIN, HIGH);  // prender la bomba del rio nivel 2
+      digitalWrite(LUZ_1_PIN, HIGH);     // prender las luces nivel 1
 
       rfid1.PICC_HaltA();
       rfid1.PCD_StopCrypto1();
@@ -62,7 +65,7 @@ void loop() {
       Serial.println("tercer nivel caracol");
 
       digitalWrite(LUZ_3_PIN, HIGH);  // prender las luces nivel 3
-      
+
       // enviar senal OSC al arduino suben-bajan-n2 para activar esas flores
       // despues de un delay enviar señal OSC para activar mapping 2
 
