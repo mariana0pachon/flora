@@ -2,17 +2,17 @@
 #include <MFRC522.h>
 
 // los lectores RFID comparten ademas los pines 13, 11, 12, 3.3V, GND
-#define SS_PIN_3 6
-#define RST_PIN_3 7
+#define SS_PIN_3 9
+#define RST_PIN_3 8
 MFRC522 rfid3(SS_PIN_3, RST_PIN_3);
 
 #define LUZ_3_PIN A5
 
 // Motor para segunda y tercera flor que sube y baja
 int motor1Pin1 = 2;
-int motor1Pin2 = 4;
-int motor2Pin1 = 9;
-int motor2Pin2 = 8;
+int motor1Pin2 = 3;
+int motor2Pin1 = 4;
+int motor2Pin2 = 5;
 
 void setup() {
   Serial.begin(9600);
@@ -28,7 +28,7 @@ void setup() {
 
 void loop() {
   // if (senal OSC fue recibida)
-  Serial.println("recibida senal OSC");
+  // Serial.println("recibida senal OSC");
 
   digitalWrite(motor1Pin1, HIGH);
   digitalWrite(motor1Pin2, LOW);
@@ -39,7 +39,7 @@ void loop() {
 
   if (rfid3.PICC_IsNewCardPresent()) {
     if (rfid3.PICC_ReadCardSerial()) {
-      Serial.println("tercer nivel caracol");
+      Serial.println("segundo nivel caracol");
 
       digitalWrite(LUZ_3_PIN, HIGH);  // prender las luces nivel 3
 

@@ -1,15 +1,15 @@
 #include <FastLED.h>
 #include <ezButton.h>
 
-// *** PINES 2, 3, 4 ya estan cogidos para las LEDS ***
+// *** PINES 5, 6, 8 ya estan cogidos para las LEDS ***
 
 // Motor para flores giratorias
-int motorPin1 = 10;
-int motorPin2 = 11;
+int motorPin1 = 11;
+int motorPin2 = 12;
 
-int pinBoton1 = 7;
-int pinBoton2 = 8;
-int pinBoton3 = 9;
+int pinBoton1 = 2;
+int pinBoton2 = 3;
+int pinBoton3 = 4;
 
 int debounceTime = 50;  // En milisegundos
 
@@ -29,10 +29,12 @@ String led2State = "black";
 String led3State = "black";
 
 void setup() {
+  Serial.begin(9600);
+
   // Inicializamos los pines de los LEDs como salidas
-  FastLED.addLeds<NEOPIXEL, 2>(leds1, 1);  // pin 2
-  FastLED.addLeds<NEOPIXEL, 3>(leds2, 1);  // pin 3
-  FastLED.addLeds<NEOPIXEL, 4>(leds3, 1);  // pin 4
+  FastLED.addLeds<NEOPIXEL, 5>(leds1, 1);  // pin 5
+  FastLED.addLeds<NEOPIXEL, 6>(leds2, 1);  // pin 6
+  FastLED.addLeds<NEOPIXEL, 8>(leds3, 1);  // pin 8
 
   limitSwitch1.setDebounceTime(debounceTime);
   limitSwitch2.setDebounceTime(debounceTime);
@@ -48,9 +50,6 @@ void loop() {
   limitSwitch3.loop();
 
   if (limitSwitch1.isPressed()) {
-    Serial.print("flor 1 se toco, ahora esta de color: ");
-    Serial.println(led1State);
-
     // enviar senal OSC de audio
 
     if (led1State == "black") {
@@ -63,17 +62,17 @@ void loop() {
       leds1[0] = CRGB::Black;
       led1State = "black";
     }
+
+    Serial.print("flor 1 se toco, ahora esta de color: ");
+    Serial.println(led1State);
   }
 
   if (limitSwitch2.isPressed()) {
-    Serial.print("flor 2 se toco, ahora esta de color: ");
-    Serial.println(led2State);
-
     // enviar senal OSC de audio
 
     if (led2State == "black") {
       leds2[0] = CRGB::White;
-      led1State = "white";
+      led2State = "white";
     } else if (led2State == "white") {
       leds2[0] = CRGB::Red;
       led2State = "red";
@@ -81,12 +80,12 @@ void loop() {
       leds2[0] = CRGB::Black;
       led2State = "black";
     }
+
+    Serial.print("flor 2 se toco, ahora esta de color: ");
+    Serial.println(led2State);
   }
 
   if (limitSwitch3.isPressed()) {
-    Serial.print("flor 3 se toco, ahora esta de color: ");
-    Serial.println(led3State);
-
     // enviar senal OSC de audio
 
     if (led3State == "black") {
@@ -99,15 +98,19 @@ void loop() {
       leds3[0] = CRGB::Black;
       led3State = "black";
     }
+
+    Serial.print("flor 3 se toco, ahora esta de color: ");
+    Serial.println(led3State);
   }
 
   FastLED.show();
 
   // Cuando las 3 leds esten en su estado final ya "polinizado" prender el motor de las flores giratorias
   if (led1State == "red" && led2State == "red" && led3State == "red") {
-    // enviar senal OSC para el climax del audio
+    Serial.print("Prender flores giratorias");
 
     digitalWrite(motorPin1, HIGH);
     digitalWrite(motorPin2, LOW);
+    // enviar senal OSC para el climax del audio
   }
 }

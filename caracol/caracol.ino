@@ -3,8 +3,8 @@
 
 // los lectores RFID comparten ademas los pines 13, 11, 12, 3.3V, GND
 
-#define SS_PIN_1 10
-#define RST_PIN_1 2
+#define SS_PIN_1 2
+#define RST_PIN_1 3
 MFRC522 rfid1(SS_PIN_1, RST_PIN_1);
 
 #define RELE_RIO_PIN 8
