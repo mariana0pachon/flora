@@ -1,11 +1,15 @@
 #include <FastLED.h>
 #include <ezButton.h>
+#include <Stepper.h>
 
 // *** PINES 5, 6, 8 ya estan cogidos para las LEDS ***
 
 // Motor para flores giratorias
-int motorPin1 = 11;
-int motorPin2 = 12;
+#define STEPS 32
+
+Stepper stepper(STEPS, 9, 11, 12, 13);  // los 4 pines IN
+
+int stepperVal = 0;
 
 int pinBoton1 = 2;
 int pinBoton2 = 3;
@@ -40,8 +44,7 @@ void setup() {
   limitSwitch2.setDebounceTime(debounceTime);
   limitSwitch3.setDebounceTime(debounceTime);
 
-  pinMode(motorPin1, OUTPUT);
-  pinMode(motorPin2, OUTPUT);
+  stepper.setSpeed(200);
 }
 
 void loop() {
@@ -109,8 +112,11 @@ void loop() {
   if (led1State == "red" && led2State == "red" && led3State == "red") {
     Serial.print("Prender flores giratorias");
 
-    digitalWrite(motorPin1, HIGH);
-    digitalWrite(motorPin2, LOW);
+    if (Serial.available() > 0) {
+      stepperVal = Serial.parseInt();
+      stepper.step(stepperVal);
+    }
+
     // enviar senal OSC para el climax del audio
   }
 }
