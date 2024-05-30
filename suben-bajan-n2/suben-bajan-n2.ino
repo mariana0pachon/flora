@@ -15,7 +15,7 @@ int motor1Velocidad = 3;  // PWM capable pin
 int motor2Pin1 = 4;
 int motor2Pin2 = A2;         // Analog pin used as digital
 int motor2Velocidad = 5;     // PWM capable pin
-int velocidadMotores = 100;  // entre 0 y 255
+int velocidadMotores = 73;  // entre 0 y 255
 
 void setup() {
   Serial.begin(9600);

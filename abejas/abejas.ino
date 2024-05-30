@@ -5,11 +5,9 @@
 // *** PINES 5, 6, 8 ya estan cogidos para las LEDS ***
 
 // Motor para flores giratorias
-#define STEPS 32
+int stepsPerRevolution = 2048;  // steps per revolution
 
-Stepper stepper(STEPS, 9, 11, 12, 13);  // los 4 pines IN
-
-int stepperVal = 0;
+Stepper stepper(stepsPerRevolution, 9, 11, 12, 13);  // los 4 pines IN
 
 int pinBoton1 = 2;
 int pinBoton2 = 3;
@@ -44,7 +42,7 @@ void setup() {
   limitSwitch2.setDebounceTime(debounceTime);
   limitSwitch3.setDebounceTime(debounceTime);
 
-  stepper.setSpeed(200);
+  stepper.setSpeed(5);  // rpm
 }
 
 void loop() {
@@ -110,12 +108,9 @@ void loop() {
 
   // Cuando las 3 leds esten en su estado final ya "polinizado" prender el motor de las flores giratorias
   if (led1State == "red" && led2State == "red" && led3State == "red") {
-    Serial.print("Prender flores giratorias");
+    Serial.println("Prender flores giratorias");
 
-    if (Serial.available() > 0) {
-      stepperVal = Serial.parseInt();
-      stepper.step(stepperVal);
-    }
+    stepper.step(stepsPerRevolution);
 
     // enviar senal OSC para el climax del audio
   }
