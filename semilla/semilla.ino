@@ -19,7 +19,7 @@ int motorPin1 = 3;
 int motorPin2 = 2;
 int motorPinVelocidad = 6;
 
-boolean audioSent = false;
+bool audioSent = false;
 
 void setup() {
   Serial.begin(115200);
