@@ -1,16 +1,19 @@
+#include "WiFiS3.h"
+#include <OSCMessage.h>
 #include <SPI.h>
 #include <MFRC522.h>
 
-#include "WiFiS3.h"
-#include <OSCMessage.h>
-
 WiFiUDP Udp;
-int update_rate = 16;          //ESTE ES EL DELAY DE ACTUALIZACIÓN DE RECEPCIÓN DE DATOS OSC
-char ssid[] = "WIFIBAU";       // Cambiar a la red del router
-char pass[] = "bau934153474";  // Cambiar a la clave del router
+int update_rate = 16;  // Update rate for OSC data reception
+char ssid[] = "Innovacion";
+char pass[] = "Innovacion24";
 
-IPAddress outIp(192, 168, 26, 203);  // IP a la que queremos enviar mensajes (Processing)
-const unsigned int outPort = 8888;   // Puerto que escucha en el otro dispositivo
+unsigned int localPort = 8881;
+
+IPAddress outIp(192, 168, 0, 106);
+const unsigned int outPort = 8000;
+
+bool audioSent = false;
 
 // los lectores RFID comparten ademas los pines 13, 11, 12, 3.3V, GND
 
@@ -26,19 +29,18 @@ void setup() {
   Serial.begin(115200);
 
   WiFi.begin(ssid, pass);
-
-  // Probar conexion hasta que funcione
   while (WiFi.status() != WL_CONNECTED) {
     delay(500);
     Serial.println("Retry WiFi connection");
   }
 
-  Serial.println("");
   Serial.println("WiFi connected");
   Serial.println("IP address: ");
-  Serial.println(WiFi.localIP());  // INCLUYENDO EL NÚMERO DE IP QUE SE NOS HA ASIGNADO
-  sendConnectionMessage();
+  Serial.println(WiFi.localIP());
 
+  Udp.begin(localPort);
+
+  sendConnectionMessage();
   SPI.begin();
 
   rfid1.PCD_Init();
@@ -52,8 +54,7 @@ void loop() {
     if (rfid1.PICC_ReadCardSerial()) {
       Serial.println("primer nivel caracol");
 
-      // enviar senal OSC audio
-      sendAudioMessage();
+      if(!audioSent) sendAudioMessage();
 
       digitalWrite(RELE_RIO_PIN, HIGH);  // prender la bomba del rio nivel 2
       digitalWrite(LUZ_1_PIN, HIGH);     // prender las luces nivel 1
@@ -67,25 +68,22 @@ void loop() {
 }
 
 void sendConnectionMessage() {
-  OSCMessage msg("/connected");  // LE PASO EL MENSAJE COMO STRING
-  msg.add("caracol");            //LE AÑADO EL VALOR QUE QUIERO ENVIAR POR EL MENSAJE
-
-  Udp.beginPacket(outIp, outPort);  //ME CONECTO AL DISPOSITIVO DEFINIDO ARRIBA EN IP Y PUERTO
-  msg.send(Udp);                    //ENVIAMOS EL MENSAJE POR PROTOCOLO UDP
-
-  //ESTAS DOS ULTIMAS ACCIONES CIERRAN LA COMUNICACIÓN PARA QUE NO QUEDE ABIERTA Y DE PROBLEMAS
+  Serial.println("sending connection OSC message...");
+  OSCMessage msg("/caracol_connected");
+  msg.add(1);
+  Udp.beginPacket(outIp, outPort);
+  msg.send(Udp);
   Udp.endPacket();
   msg.empty();
 }
 
 void sendAudioMessage() {
-  OSCMessage msg("/audio");  // LE PASO EL MENSAJE COMO STRING
-  msg.add("caracol");        //LE AÑADO EL VALOR QUE QUIERO ENVIAR POR EL MENSAJE
-
-  Udp.beginPacket(outIp, outPort);  //ME CONECTO AL DISPOSITIVO DEFINIDO ARRIBA EN IP Y PUERTO
-  msg.send(Udp);                    //ENVIAMOS EL MENSAJE POR PROTOCOLO UDP
-
-  //ESTAS DOS ULTIMAS ACCIONES CIERRAN LA COMUNICACIÓN PARA QUE NO QUEDE ABIERTA Y DE PROBLEMAS
+  Serial.println("sending audio OSC message...");
+  OSCMessage msg("/caracol");
+  msg.add(123);
+  Udp.beginPacket(outIp, outPort);
+  msg.send(Udp);
   Udp.endPacket();
   msg.empty();
+  audioSent = true;
 }
