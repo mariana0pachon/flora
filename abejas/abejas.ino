@@ -92,7 +92,7 @@ void setup() {
   FastLED.addLeds<NEOPIXEL, 6>(leds2, 1);  // pin 6
   FastLED.addLeds<NEOPIXEL, 8>(leds3, 1);  // pin 8
 
-  FastLED.setBrightness(100); // 0 a 255
+  FastLED.setBrightness(50); // 0 a 255
 
   limitSwitch1.setDebounceTime(debounceTime);
   limitSwitch2.setDebounceTime(debounceTime);
