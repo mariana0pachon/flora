@@ -6,12 +6,15 @@
 
 WiFiUDP Udp;
 int update_rate = 16;  // Update rate for OSC data reception
-char ssid[] = "Innovacion";
-char pass[] = "Innovacion24";
+// char ssid[] = "Innovacion";
+// char pass[] = "Innovacion24";
+char ssid[] = "WIFIBAU";
+char pass[] = "bau934153474";
 
 unsigned int localPort = 8881;
 
-IPAddress outIp(192, 168, 0, 106);
+// IPAddress outIp(192, 168, 0, 106);
+IPAddress outIp(192, 168, 27, 100);
 const unsigned int outPort = 8000;
 
 bool climaxAudioSent = false;
@@ -22,6 +25,12 @@ bool climaxAudioSent = false;
 int stepsPerRevolution = 2048;  // steps per revolution
 
 Stepper stepper(stepsPerRevolution, 9, 11, 12, 13);  // los 4 pines IN
+
+// Motor para flores centrales
+int motor1Pin1 = 9;
+int motor1Pin2 = 12;
+int motor1Velocidad = 11;   // PWM capable pin
+int velocidadMotores = 90;  // entre 0 y 255
 
 int pinBoton1 = 2;
 int pinBoton2 = 3;
@@ -44,6 +53,24 @@ String led1State = "black";
 String led2State = "black";
 String led3State = "black";
 
+// Define the colors
+CRGB colors[] = { CRGB::Blue, CRGB::Purple, CRGB::Yellow, CRGB::Red, CRGB::Orange, CRGB::Pink };
+const int numColors = sizeof(colors) / sizeof(colors[0]);
+
+// Variables for current and target colors for each LED
+CRGB targetColor1, targetColor2, targetColor3;
+CRGB currentColor1, currentColor2, currentColor3;
+
+// Fade durations in milliseconds for each LED
+uint16_t fadeDuration1 = random(1000, 3000);
+uint16_t fadeDuration2 = random(1000, 3000);
+uint16_t fadeDuration3 = random(1000, 3000);
+
+// Fade steps for each LED
+uint16_t fadeStep1 = 0;
+uint16_t fadeStep2 = 0;
+uint16_t fadeStep3 = 0;
+
 void setup() {
   Serial.begin(115200);
 
@@ -65,11 +92,18 @@ void setup() {
   FastLED.addLeds<NEOPIXEL, 6>(leds2, 1);  // pin 6
   FastLED.addLeds<NEOPIXEL, 8>(leds3, 1);  // pin 8
 
+  FastLED.setBrightness(100); // 0 a 255
+
   limitSwitch1.setDebounceTime(debounceTime);
   limitSwitch2.setDebounceTime(debounceTime);
   limitSwitch3.setDebounceTime(debounceTime);
 
-  stepper.setSpeed(5);  // rpm
+  // stepper.setSpeed(5);  // rpm
+
+  pinMode(motor1Pin1, OUTPUT);
+  pinMode(motor1Pin2, OUTPUT);
+  pinMode(motor1Velocidad, OUTPUT);
+  analogWrite(motor1Velocidad, velocidadMotores);
 }
 
 void loop() {
@@ -81,14 +115,15 @@ void loop() {
     sendAbejasAudioMessage();
 
     if (led1State == "black") {
-      leds1[0] = CRGB::White;
-      led1State = "white";
-    } else if (led1State == "white") {
-      leds1[0] = CRGB::Red;
-      led1State = "red";
+      leds1[0] = CRGB::Blue;
+      led1State = "blue";
+    } else if (led1State == "blue") {
+      leds1[0] = CRGB::Purple;
+      led1State = "purple";
     } else {
-      leds1[0] = CRGB::Black;
-      led1State = "black";
+      currentColor1 = CRGB::Yellow;
+      leds1[0] = currentColor1;
+      led1State = "multicolor";
     }
 
     Serial.print("flor 1 se toco, ahora esta de color: ");
@@ -99,14 +134,15 @@ void loop() {
     sendAbejasAudioMessage();
 
     if (led2State == "black") {
-      leds2[0] = CRGB::White;
-      led2State = "white";
-    } else if (led2State == "white") {
-      leds2[0] = CRGB::Red;
-      led2State = "red";
+      leds2[0] = CRGB::Blue;
+      led2State = "blue";
+    } else if (led2State == "blue") {
+      leds2[0] = CRGB::Purple;
+      led2State = "purple";
     } else {
-      leds2[0] = CRGB::Black;
-      led2State = "black";
+      currentColor2 = CRGB::Yellow;
+      leds2[0] = currentColor2;
+      led2State = "multicolor";
     }
 
     Serial.print("flor 2 se toco, ahora esta de color: ");
@@ -118,14 +154,15 @@ void loop() {
     sendAbejasAudioMessage();
 
     if (led3State == "black") {
-      leds3[0] = CRGB::White;
-      led3State = "white";
-    } else if (led3State == "white") {
-      leds3[0] = CRGB::Red;
-      led3State = "red";
+      leds3[0] = CRGB::Blue;
+      led3State = "blue";
+    } else if (led3State == "blue") {
+      leds3[0] = CRGB::Purple;
+      led3State = "purple";
     } else {
-      leds3[0] = CRGB::Black;
-      led3State = "black";
+      currentColor3 = CRGB::Yellow;
+      leds3[0] = currentColor3;
+      led3State = "multicolor";
     }
 
     Serial.print("flor 3 se toco, ahora esta de color: ");
@@ -135,12 +172,54 @@ void loop() {
   FastLED.show();
 
   // Cuando las 3 leds esten en su estado final ya "polinizado" prender el motor de las flores giratorias
-  if (led1State == "red" && led2State == "red" && led3State == "red") {
+  if (led1State == "multicolor" && led2State == "multicolor" && led3State == "multicolor") {
     Serial.println("Prender flores giratorias");
 
-    stepper.step(stepsPerRevolution);
+    // stepper.step(stepsPerRevolution);
+    digitalWrite(motor1Pin1, HIGH);
+    digitalWrite(motor1Pin2, LOW);
 
     if (!climaxAudioSent) sendClimaxAudioMessage();
+
+
+    // Handle fading effect for LED 1
+    EVERY_N_MILLISECONDS(fadeDuration1 / 255) {
+      fadeStep1++;
+      if (fadeStep1 > 255) {
+        fadeStep1 = 0;
+        targetColor1 = colors[random(0, numColors)];
+        fadeDuration1 = random(1000, 3000);
+      }
+      currentColor1 = blend(currentColor1, targetColor1, fadeStep1);
+      leds1[0] = currentColor1;
+    }
+
+    // Handle fading effect for LED 2
+    EVERY_N_MILLISECONDS(fadeDuration2 / 255) {
+      fadeStep2++;
+      if (fadeStep2 > 255) {
+        fadeStep2 = 0;
+        targetColor2 = colors[random(0, numColors)];
+        fadeDuration2 = random(1000, 3000);
+      }
+      currentColor2 = blend(currentColor2, targetColor2, fadeStep2);
+      leds2[0] = currentColor2;
+    }
+
+    // Handle fading effect for LED 3
+    EVERY_N_MILLISECONDS(fadeDuration3 / 255) {
+      fadeStep3++;
+      if (fadeStep3 > 255) {
+        fadeStep3 = 0;
+        targetColor3 = colors[random(0, numColors)];
+        fadeDuration3 = random(1000, 3000);
+      }
+      currentColor3 = blend(currentColor3, targetColor3, fadeStep3);
+      leds3[0] = currentColor3;
+    }
+
+    // Show the updated colors on all LEDs
+    FastLED.show();
   }
 
   delay(update_rate);
