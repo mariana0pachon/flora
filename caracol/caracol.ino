@@ -5,12 +5,15 @@
 
 WiFiUDP Udp;
 int update_rate = 16;  // Update rate for OSC data reception
-char ssid[] = "Innovacion";
-char pass[] = "Innovacion24";
+// char ssid[] = "Innovacion";
+// char pass[] = "Innovacion24";
+char ssid[] = "WIFIBAU";
+char pass[] = "bau934153474";
 
 unsigned int localPort = 8881;
 
-IPAddress outIp(192, 168, 0, 106);
+// IPAddress outIp(192, 168, 0, 106);
+IPAddress outIp(192, 168, 27, 100);
 const unsigned int outPort = 8000;
 
 bool audioSent = false;
@@ -23,7 +26,7 @@ MFRC522 rfid1(SS_PIN_1, RST_PIN_1);
 
 #define RELE_RIO_PIN 8
 
-#define LUZ_1_PIN A0
+#define LUZ_1_PIN A1
 
 void setup() {
   Serial.begin(115200);

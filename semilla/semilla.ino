@@ -3,12 +3,15 @@
 
 WiFiUDP Udp;
 int update_rate = 16;  // Update rate for OSC data reception
-char ssid[] = "Innovacion";
-char pass[] = "Innovacion24";
+// char ssid[] = "Innovacion";
+// char pass[] = "Innovacion24";
+char ssid[] = "WIFIBAU";
+char pass[] = "bau934153474";
 
 unsigned int localPort = 8881;
 
-IPAddress outIp(192, 168, 0, 106);
+// IPAddress outIp(192, 168, 0, 106);
+IPAddress outIp(192, 168, 27, 100);
 const unsigned int outPort = 8000;
 
 #define LUZ_2_PIN A1
@@ -20,6 +23,7 @@ int motorPin2 = 2;
 int motorPinVelocidad = 6;
 
 bool audioSent = false;
+bool semillaPlantada = false;
 
 void setup() {
   Serial.begin(115200);
@@ -44,6 +48,8 @@ void setup() {
   pinMode(motorPin2, OUTPUT);
   pinMode(motorPinVelocidad, OUTPUT);
 
+  analogWrite(motorPinVelocidad, 100);
+
   pinMode(LUZ_2_PIN, OUTPUT);
 }
 
@@ -56,12 +62,15 @@ void loop() {
   // Serial.println(analogRead(pinSensorHumedad));
 
   if (analogRead(pinSensorHumedad) > 0) {
+    semillaPlantada = true;
+  }
+
+  if (semillaPlantada) {
     Serial.println("se planto la semilla");
 
     if (!audioSent) sendAudioMessage();
 
     digitalWrite(pinReleRio, HIGH);
-    analogWrite(motorPinVelocidad, 100);
     digitalWrite(motorPin1, HIGH);
     digitalWrite(motorPin2, LOW);
   }

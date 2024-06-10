@@ -5,12 +5,15 @@
 
 WiFiUDP Udp;
 int update_rate = 16;  // Update rate for OSC data reception
-char ssid[] = "Innovacion";
-char pass[] = "Innovacion24";
+// char ssid[] = "Innovacion";
+// char pass[] = "Innovacion24";
+char ssid[] = "WIFIBAU";
+char pass[] = "bau934153474";
 
 unsigned int localPort = 8881;
 
-IPAddress outIp(192, 168, 0, 106);
+// IPAddress outIp(192, 168, 0, 106);
+IPAddress outIp(192, 168, 27, 100);
 const unsigned int outPort = 8000;
 
 // los lectores RFID comparten ademas los pines 13, 11, 12, 3.3V, GND
@@ -58,6 +61,9 @@ void setup() {
 
   rfid3.PCD_Init();
   pinMode(LUZ_3_PIN, OUTPUT);
+
+  analogWrite(motor1Velocidad, velocidadMotores);
+  analogWrite(motor2Velocidad, velocidadMotores);
 }
 
 void loop() {
@@ -69,11 +75,9 @@ void loop() {
 
       digitalWrite(LUZ_3_PIN, HIGH);  // prender las luces nivel 3
 
-      analogWrite(motor1Velocidad, velocidadMotores);
       digitalWrite(motor1Pin1, HIGH);
       digitalWrite(motor1Pin2, LOW);
 
-      analogWrite(motor2Velocidad, velocidadMotores);
       digitalWrite(motor2Pin1, HIGH);
       digitalWrite(motor2Pin2, LOW);
 
