@@ -257,7 +257,27 @@ void sendClimaxAudioMessage() {
   climaxAudioSent = true;
 }
 
-void reset() {
+void receiveMessage() {
+  OSCMessage inmsg;              //CREAMOS UNA VARIABLE TIPO OSCMessage (DE LA LIBRERÍA OSC) QUE NOS GUARDA EN UN OBJETO LA INFO DEL MENSAJE
+  int size = Udp.parsePacket();  //AQUÍ 'PARSEAMOS' PARA VER EL TAMAÑO DE ESE MENSAJE QUE NOS HEMOS GUARDADO
+
+  if (size > 0) {  //SI EM MENSAJE NO ESTÀ VACIÓ
+    while (size--) {
+      inmsg.fill(Udp.read());  //VAMOS LLENADO LA VARIABLE DE ATRÁS HACIA DELANTE
+    }
+
+    //----------> DESDE AQUÍ HASTA EL FINAL DE LA FUNCIÓN LO PODÉS REPETIR POR CADA MENSAJE
+    //POR CADA 'DIRECCION' O NOMBRE DE MENSAJE QUE VAMOS A RECIBIR
+    if (!inmsg.hasError()) {            //TENEMOS QUE COMPROBAR QUE NO HAYA ERROR
+      inmsg.dispatch("/reset", reset);  //LEERLA Y ASIGNARLE UNA FUNCIÓN DE RESPUESTA
+    }
+    //----------> ESTE ES EL FINAL DE LA FUNCIÓN A REPETIR POR CADA MENSAJE
+  }
+}
+
+void reset(OSCMessage &msg) {
+  Serial.println("resetting abejas");
+
   leds1[0] = CRGB::Black;
   led1State = "black";
 
