@@ -4,6 +4,8 @@
 #include "WiFiS3.h"
 #include <OSCMessage.h>
 
+// EL IP DE ESTE ARDUINO ES 192.168.0.111
+
 WiFiUDP Udp;
 int update_rate = 16;  // Update rate for OSC data reception
 char ssid[] = "Innovacion";
@@ -13,9 +15,9 @@ char pass[] = "Innovacion24";
 
 unsigned int localPort = 8881;
 
-// IPAddress outIp(192, 168, 0, 106); // mariana innov
+IPAddress outIp(192, 168, 0, 106); // mariana innov
 // IPAddress outIp(192, 168, 27, 100); // mariana wifi bau
-IPAddress outIp(192, 168, 0, 124);  // daniela wifi innov
+// IPAddress outIp(192, 168, 0, 124);  // daniela wifi innov
 const unsigned int outPort = 8000;
 
 bool climaxAudioSent = false;
@@ -31,7 +33,7 @@ Stepper stepper(stepsPerRevolution, 9, 11, 12, 13);  // los 4 pines IN
 int motor1Pin1 = 9;
 int motor1Pin2 = 12;
 int motor1Velocidad = 11;   // PWM capable pin
-int velocidadMotores = 90;  // entre 0 y 255
+int velocidadMotores = 255;  // entre 0 y 255
 
 int pinBoton1 = 2;
 int pinBoton2 = 3;
@@ -108,6 +110,8 @@ void setup() {
 }
 
 void loop() {
+  receiveMessage();
+
   limitSwitch1.loop();
   limitSwitch2.loop();
   limitSwitch3.loop();
@@ -181,7 +185,6 @@ void loop() {
     digitalWrite(motor1Pin2, LOW);
 
     if (!climaxAudioSent) sendClimaxAudioMessage();
-
 
     // Handle fading effect for LED 1
     EVERY_N_MILLISECONDS(fadeDuration1 / 255) {
@@ -285,8 +288,10 @@ void reset(OSCMessage &msg) {
   led2State = "black";
 
   leds3[0] = CRGB::Black;
-  ed3State = "black";
+  led3State = "black";
 
-  digitalWrite(motor1Pin1, HIGH);
+  digitalWrite(motor1Pin1, LOW);
   digitalWrite(motor1Pin2, LOW);
+
+  climaxAudioSent = false;
 }

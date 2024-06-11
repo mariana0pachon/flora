@@ -1,18 +1,20 @@
 #include "WiFiS3.h"
 #include <OSCMessage.h>
 
+// EL IP DE ESTE ARDUINO ES 192.168.0.122
+
 WiFiUDP Udp;
 int update_rate = 16;  // Update rate for OSC data reception
-// char ssid[] = "Innovacion";
-// char pass[] = "Innovacion24";
-char ssid[] = "WIFIBAU";
-char pass[] = "bau934153474";
+char ssid[] = "Innovacion";
+char pass[] = "Innovacion24";
+// char ssid[] = "WIFIBAU";
+// char pass[] = "bau934153474";
 
 unsigned int localPort = 8881;
 
-// IPAddress outIp(192, 168, 0, 106); // mariana innov
+IPAddress outIp(192, 168, 0, 106); // mariana innov
 // IPAddress outIp(192, 168, 27, 100); // mariana wifi bau
-IPAddress outIp(192, 168, 0, 124);  // daniela wifi innov
+// IPAddress outIp(192, 168, 0, 124);  // daniela wifi innov
 const unsigned int outPort = 8000;
 
 #define LUZ_2_PIN A1
@@ -55,19 +57,23 @@ void setup() {
 }
 
 void loop() {
+  // Serial.println(WiFi.localIP());
+
   // delay(5000);
   // Serial.println();
   // sendAudioMessage();
 
   // Serial.println("in loop");
-  // Serial.println(analogRead(pinSensorHumedad));
+  receiveMessage();
 
-  if (analogRead(pinSensorHumedad) > 0) {
+  if (analogRead(pinSensorHumedad) > 500) {
     semillaPlantada = true;
+  } else {
+    semillaPlantada = false;
   }
 
   if (semillaPlantada) {
-    Serial.println("se planto la semilla");
+    // Serial.println("se planto la semilla");
 
     if (!audioSent) sendAudioMessage();
 
@@ -119,6 +125,8 @@ void receiveMessage() {
 
 void reset(OSCMessage &msg) {
   Serial.println("resetting semilla");
+  semillaPlantada = false;
+  audioSent = false;
   digitalWrite(pinReleRio, LOW);
   digitalWrite(motorPin1, LOW);
   digitalWrite(motorPin2, LOW);

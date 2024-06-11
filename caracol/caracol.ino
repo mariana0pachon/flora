@@ -3,6 +3,8 @@
 #include <SPI.h>
 #include <MFRC522.h>
 
+// EL IP DE ESTE ARDUINO ES 192.168.0.102
+
 WiFiUDP Udp;
 int update_rate = 16;  // Update rate for OSC data reception
 char ssid[] = "Innovacion";
@@ -12,9 +14,9 @@ char pass[] = "Innovacion24";
 
 unsigned int localPort = 8881;
 
-// IPAddress outIp(192, 168, 0, 106); // mariana innov
+IPAddress outIp(192, 168, 0, 106); // mariana innov
 // IPAddress outIp(192, 168, 27, 100); // mariana wifi bau
-IPAddress outIp(192, 168, 0, 124);  // daniela wifi innov
+// IPAddress outIp(192, 168, 0, 124);  // daniela wifi innov
 
 const unsigned int outPort = 8000;
 
@@ -55,6 +57,8 @@ void setup() {
 }
 
 void loop() {
+  receiveMessage();
+
   if (rfid1.PICC_IsNewCardPresent()) {
     if (rfid1.PICC_ReadCardSerial()) {
       Serial.println("primer nivel caracol");
@@ -116,4 +120,6 @@ void reset(OSCMessage &msg) {
 
   digitalWrite(RELE_RIO_PIN, LOW);
   digitalWrite(LUZ_1_PIN, LOW);
+
+  audioSent = false;
 }

@@ -9,7 +9,7 @@
 #X obj 30 80 route semilla;
 #X obj 360 80 route abejas;
 #X obj 1110 -90 tgl 75 0 empty empty empty 17 7 0 10 #fcfcfc #10a21a
-#000000 0 1;
+#000000 1 1;
 #X obj 1110 -10 s on/off;
 #X obj 30 140 s semilla;
 #X obj 130 140 s caracol;
@@ -140,8 +140,8 @@
 #X connect 3 0 6 0;
 #X connect 3 0 7 0;
 #X connect 3 0 28 0;
-#X connect 3 0 68 0;
 #X connect 3 0 80 0;
+#X connect 3 0 68 0;
 #X connect 4 0 45 0;
 #X connect 4 0 46 0;
 #X connect 5 0 11 0;
