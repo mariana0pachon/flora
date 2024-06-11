@@ -5,15 +5,17 @@
 
 WiFiUDP Udp;
 int update_rate = 16;  // Update rate for OSC data reception
-// char ssid[] = "Innovacion";
-// char pass[] = "Innovacion24";
-char ssid[] = "WIFIBAU";
-char pass[] = "bau934153474";
+char ssid[] = "Innovacion";
+char pass[] = "Innovacion24";
+// char ssid[] = "WIFIBAU";
+// char pass[] = "bau934153474";
 
 unsigned int localPort = 8881;
 
-// IPAddress outIp(192, 168, 0, 106);
-IPAddress outIp(192, 168, 27, 100);
+// IPAddress outIp(192, 168, 0, 106); // mariana innov
+// IPAddress outIp(192, 168, 27, 100); // mariana wifi bau
+IPAddress outIp(192, 168, 0, 124);  // daniela wifi innov
+
 const unsigned int outPort = 8000;
 
 bool audioSent = false;
@@ -57,7 +59,7 @@ void loop() {
     if (rfid1.PICC_ReadCardSerial()) {
       Serial.println("primer nivel caracol");
 
-      if(!audioSent) sendAudioMessage();
+      if (!audioSent) sendAudioMessage();
 
       digitalWrite(RELE_RIO_PIN, HIGH);  // prender la bomba del rio nivel 2
       digitalWrite(LUZ_1_PIN, HIGH);     // prender las luces nivel 1
@@ -89,4 +91,9 @@ void sendAudioMessage() {
   Udp.endPacket();
   msg.empty();
   audioSent = true;
+}
+
+void reset() {
+  digitalWrite(RELE_RIO_PIN, LOW);
+  digitalWrite(LUZ_1_PIN, LOW);
 }

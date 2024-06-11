@@ -6,15 +6,16 @@
 
 WiFiUDP Udp;
 int update_rate = 16;  // Update rate for OSC data reception
-// char ssid[] = "Innovacion";
-// char pass[] = "Innovacion24";
-char ssid[] = "WIFIBAU";
-char pass[] = "bau934153474";
+char ssid[] = "Innovacion";
+char pass[] = "Innovacion24";
+// char ssid[] = "WIFIBAU";
+// char pass[] = "bau934153474";
 
 unsigned int localPort = 8881;
 
-// IPAddress outIp(192, 168, 0, 106);
-IPAddress outIp(192, 168, 27, 100);
+// IPAddress outIp(192, 168, 0, 106); // mariana innov
+// IPAddress outIp(192, 168, 27, 100); // mariana wifi bau
+IPAddress outIp(192, 168, 0, 124);  // daniela wifi innov
 const unsigned int outPort = 8000;
 
 bool climaxAudioSent = false;
@@ -92,7 +93,7 @@ void setup() {
   FastLED.addLeds<NEOPIXEL, 6>(leds2, 1);  // pin 6
   FastLED.addLeds<NEOPIXEL, 8>(leds3, 1);  // pin 8
 
-  FastLED.setBrightness(50); // 0 a 255
+  FastLED.setBrightness(50);  // 0 a 255
 
   limitSwitch1.setDebounceTime(debounceTime);
   limitSwitch2.setDebounceTime(debounceTime);
@@ -254,4 +255,18 @@ void sendClimaxAudioMessage() {
   Udp.endPacket();
   msg.empty();
   climaxAudioSent = true;
+}
+
+void reset() {
+  leds1[0] = CRGB::Black;
+  led1State = "black";
+
+  leds2[0] = CRGB::Black;
+  led2State = "black";
+
+  leds3[0] = CRGB::Black;
+  ed3State = "black";
+
+  digitalWrite(motor1Pin1, HIGH);
+  digitalWrite(motor1Pin2, LOW);
 }

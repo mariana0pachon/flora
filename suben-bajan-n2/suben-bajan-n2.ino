@@ -5,15 +5,16 @@
 
 WiFiUDP Udp;
 int update_rate = 16;  // Update rate for OSC data reception
-// char ssid[] = "Innovacion";
-// char pass[] = "Innovacion24";
-char ssid[] = "WIFIBAU";
-char pass[] = "bau934153474";
+char ssid[] = "Innovacion";
+char pass[] = "Innovacion24";
+// char ssid[] = "WIFIBAU";
+// char pass[] = "bau934153474";
 
 unsigned int localPort = 8881;
 
-// IPAddress outIp(192, 168, 0, 106);
-IPAddress outIp(192, 168, 27, 100);
+// IPAddress outIp(192, 168, 0, 106); // mariana innov
+// IPAddress outIp(192, 168, 27, 100); // mariana wifi bau
+IPAddress outIp(192, 168, 0, 124);  // daniela wifi innov
 const unsigned int outPort = 8000;
 
 // los lectores RFID comparten ademas los pines 13, 11, 12, 3.3V, GND
@@ -108,4 +109,14 @@ void sendAudioMessage() {
   Udp.endPacket();
   msg.empty();
   audioSent = true;
+}
+
+void reset() {
+  digitalWrite(LUZ_3_PIN, LOW);
+
+  digitalWrite(motor1Pin1, LOW);
+  digitalWrite(motor1Pin2, LOW);
+
+  digitalWrite(motor2Pin1, LOW);
+  digitalWrite(motor2Pin2, LOW);
 }

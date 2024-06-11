@@ -10,8 +10,9 @@ char pass[] = "bau934153474";
 
 unsigned int localPort = 8881;
 
-// IPAddress outIp(192, 168, 0, 106);
-IPAddress outIp(192, 168, 27, 100);
+// IPAddress outIp(192, 168, 0, 106); // mariana innov
+// IPAddress outIp(192, 168, 27, 100); // mariana wifi bau
+IPAddress outIp(192, 168, 0, 124);  // daniela wifi innov
 const unsigned int outPort = 8000;
 
 #define LUZ_2_PIN A1
@@ -96,4 +97,10 @@ void sendAudioMessage() {
   Udp.endPacket();
   msg.empty();
   audioSent = true;
+}
+
+void reset() {
+  digitalWrite(pinReleRio, LOW);
+  digitalWrite(motorPin1, LOW);
+  digitalWrite(motorPin2, LOW);
 }
