@@ -1,7 +1,7 @@
 #include "WiFiS3.h"
 #include <OSCMessage.h>
 
-// EL IP DE ESTE ARDUINO ES 192.168.0.122
+// EL IP DE ESTE ARDUINO ES 192.168.0.121
 
 WiFiUDP Udp;
 int update_rate = 16;  // Update rate for OSC data reception
@@ -12,7 +12,7 @@ char pass[] = "Innovacion24";
 
 unsigned int localPort = 8881;
 
-IPAddress outIp(192, 168, 0, 106); // mariana innov
+IPAddress outIp(192, 168, 0, 119); // mariana innov
 // IPAddress outIp(192, 168, 27, 100); // mariana wifi bau
 // IPAddress outIp(192, 168, 0, 124);  // daniela wifi innov
 const unsigned int outPort = 8000;

@@ -14,7 +14,7 @@ char pass[] = "Innovacion24";
 
 unsigned int localPort = 8881;
 
-IPAddress outIp(192, 168, 0, 106); // mariana innov
+IPAddress outIp(192, 168, 0, 119); // mariana innov
 // IPAddress outIp(192, 168, 27, 100); // mariana wifi bau
 // IPAddress outIp(192, 168, 0, 124);  // daniela wifi innov
 const unsigned int outPort = 8000;

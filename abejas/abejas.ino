@@ -15,7 +15,7 @@ char pass[] = "Innovacion24";
 
 unsigned int localPort = 8881;
 
-IPAddress outIp(192, 168, 0, 106); // mariana innov
+IPAddress outIp(192, 168, 0, 119);  // mariana innov
 // IPAddress outIp(192, 168, 27, 100); // mariana wifi bau
 // IPAddress outIp(192, 168, 0, 124);  // daniela wifi innov
 const unsigned int outPort = 8000;
@@ -32,7 +32,7 @@ Stepper stepper(stepsPerRevolution, 9, 11, 12, 13);  // los 4 pines IN
 // Motor para flores centrales
 int motor1Pin1 = 9;
 int motor1Pin2 = 12;
-int motor1Velocidad = 11;   // PWM capable pin
+int motor1Velocidad = 11;    // PWM capable pin
 int velocidadMotores = 255;  // entre 0 y 255
 
 int pinBoton1 = 2;
@@ -121,7 +121,8 @@ void loop() {
 
     if (led1State == "black") {
       leds1[0] = CRGB::Blue;
-      led1State = "blue";
+      // led1State = "blue";
+      led1State = "multicolor";
     } else if (led1State == "blue") {
       leds1[0] = CRGB::Purple;
       led1State = "purple";
@@ -140,7 +141,8 @@ void loop() {
 
     if (led2State == "black") {
       leds2[0] = CRGB::Blue;
-      led2State = "blue";
+      // led2State = "blue";
+      led2State = "multicolor";
     } else if (led2State == "blue") {
       leds2[0] = CRGB::Purple;
       led2State = "purple";
@@ -160,7 +162,8 @@ void loop() {
 
     if (led3State == "black") {
       leds3[0] = CRGB::Blue;
-      led3State = "blue";
+      // led3State = "blue";
+      led3State = "multicolor";
     } else if (led3State == "blue") {
       leds3[0] = CRGB::Purple;
       led3State = "purple";

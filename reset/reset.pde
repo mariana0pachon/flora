@@ -21,19 +21,19 @@ void setup() {
   
   oscP5 = new OscP5(this, 12000); // Initialize oscP5
   
-  semilla = new NetAddress("192.168.0.120", 8881);
+  semilla = new NetAddress("192.168.0.121", 8881);
   caracol = new NetAddress("192.168.0.102", 8881);
   abejas = new NetAddress("192.168.0.111", 8881);
   suben_bajan = new NetAddress("192.168.0.113", 8881);
   
-  audioIP = new NetAddress("192.168.0.106", 8000); // IP mariana innov
+  audioIP = new NetAddress("192.168.0.119", 8000); // IP mariana innov
   //audioIP = new NetAddress("192.168.27.100", 8000); // IP mariana wifi bau
   //audioIP = new NetAddress("192.168.0.124", 8000); // IP daniela innov
 
   textSize(32);  // Set the text size for the "reset" text
   fill(255);  // Set the text color to white
 }
-
+ 
 void draw() {
   background(0);
   text("reset", width / 2 - textWidth("reset") / 2, height / 2);  // Display "reset" text in the center of the screen
