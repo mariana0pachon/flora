@@ -5,16 +5,18 @@
 
 WiFiUDP Udp;
 int update_rate = 16;  // Update rate for OSC data reception
-char ssid[] = "Innovacion";
-char pass[] = "Innovacion24";
+char ssid[] = "Router_Flora";
+char pass[] = "Flora666";
 // char ssid[] = "WIFIBAU";
 // char pass[] = "bau934153474";
 
 unsigned int localPort = 8881;
 
-IPAddress outIp(192, 168, 0, 119); // mariana innov
+// IPAddress outIp(192, 168, 0, 119); // mariana innov
 // IPAddress outIp(192, 168, 27, 100); // mariana wifi bau
 // IPAddress outIp(192, 168, 0, 124);  // daniela wifi innov
+IPAddress outIp(192, 168, 1, 35);  // mariana wifi Flora_Router
+
 const unsigned int outPort = 8000;
 
 #define LUZ_2_PIN A1
@@ -63,10 +65,12 @@ void loop() {
   // Serial.println();
   // sendAudioMessage();
 
-  // Serial.println("in loop");
+  //Serial.println("in loop");
   receiveMessage();
 
-  if (analogRead(pinSensorHumedad) > 500) {
+  //Serial.println(analogRead(pinSensorHumedad));
+
+  if (analogRead(pinSensorHumedad) > 200) {
     semillaPlantada = true;
   } else {
     semillaPlantada = false;
