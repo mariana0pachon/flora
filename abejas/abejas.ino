@@ -8,14 +8,15 @@
 
 WiFiUDP Udp;
 int update_rate = 16;  // Update rate for OSC data reception
-char ssid[] = "Innovacion";
-char pass[] = "Innovacion24";
+char ssid[] = "Router_Flora";
+char pass[] = "Flora666";
 // char ssid[] = "WIFIBAU";
 // char pass[] = "bau934153474";
 
 unsigned int localPort = 8881;
 
-IPAddress outIp(192, 168, 0, 119);  // mariana innov
+IPAddress outIp(192, 168, 1, 35);  // mariana wifi Flora_Router
+// IPAddress outIp(192, 168, 0, 119);  // mariana innov
 // IPAddress outIp(192, 168, 27, 100); // mariana wifi bau
 // IPAddress outIp(192, 168, 0, 124);  // daniela wifi innov
 const unsigned int outPort = 8000;
@@ -46,10 +47,12 @@ ezButton limitSwitch1(pinBoton1);
 ezButton limitSwitch2(pinBoton2);
 ezButton limitSwitch3(pinBoton3);
 
+#define NUM_LEDS 5
+
 // Definimos las tiras de led que tienen 1 solo led
-CRGB leds1[1];
-CRGB leds2[1];
-CRGB leds3[1];
+CRGB leds1[NUM_LEDS];
+CRGB leds2[NUM_LEDS];
+CRGB leds3[NUM_LEDS];
 
 // Estados de colores de leds
 String led1State = "black";
@@ -91,11 +94,22 @@ void setup() {
 
   sendConnectionMessage();
   // Inicializamos los pines de los LEDs como salidas
-  FastLED.addLeds<NEOPIXEL, 5>(leds1, 1);  // pin 5
-  FastLED.addLeds<NEOPIXEL, 6>(leds2, 1);  // pin 6
-  FastLED.addLeds<NEOPIXEL, 8>(leds3, 1);  // pin 8
+  FastLED.addLeds<NEOPIXEL, 5>(leds1, NUM_LEDS);  // pin 5
+  FastLED.addLeds<NEOPIXEL, 6>(leds2, NUM_LEDS);  // pin 6
+  FastLED.addLeds<NEOPIXEL, 8>(leds3, NUM_LEDS);  // pin 8
 
   FastLED.setBrightness(50);  // 0 a 255
+
+  for (int i = 0; i < NUM_LEDS; i++) {
+    leds1[i] = CRGB::Black;
+    led1State = "black";
+
+    leds2[i] = CRGB::Black;
+    led2State = "black";
+
+    leds3[i] = CRGB::Black;
+    led3State = "black";
+  }
 
   limitSwitch1.setDebounceTime(debounceTime);
   limitSwitch2.setDebounceTime(debounceTime);
@@ -120,15 +134,21 @@ void loop() {
     sendAbejasAudioMessage();
 
     if (led1State == "black") {
-      leds1[0] = CRGB::Blue;
+      for (int i = 0; i < NUM_LEDS; i++) {
+        leds1[i] = CRGB::Blue;
+      }
       // led1State = "blue";
       led1State = "multicolor";
     } else if (led1State == "blue") {
-      leds1[0] = CRGB::Purple;
+      for (int i = 0; i < NUM_LEDS; i++) {
+        leds1[i] = CRGB::Purple;
+      }
       led1State = "purple";
     } else {
       currentColor1 = CRGB::Yellow;
-      leds1[0] = currentColor1;
+      for (int i = 0; i < NUM_LEDS; i++) {
+        leds1[i] = currentColor1;
+      }
       led1State = "multicolor";
     }
 
@@ -140,15 +160,21 @@ void loop() {
     sendAbejasAudioMessage();
 
     if (led2State == "black") {
-      leds2[0] = CRGB::Blue;
+      for (int i = 0; i < NUM_LEDS; i++) {
+        leds2[i] = CRGB::Blue;
+      }
       // led2State = "blue";
       led2State = "multicolor";
     } else if (led2State == "blue") {
-      leds2[0] = CRGB::Purple;
+      for (int i = 0; i < NUM_LEDS; i++) {
+        leds2[i] = CRGB::Purple;
+      }
       led2State = "purple";
     } else {
       currentColor2 = CRGB::Yellow;
-      leds2[0] = currentColor2;
+      for (int i = 0; i < NUM_LEDS; i++) {
+        leds2[i] = currentColor2;
+      }
       led2State = "multicolor";
     }
 
@@ -161,15 +187,21 @@ void loop() {
     sendAbejasAudioMessage();
 
     if (led3State == "black") {
-      leds3[0] = CRGB::Blue;
+      for (int i = 0; i < NUM_LEDS; i++) {
+        leds3[i] = CRGB::Blue;
+      }
       // led3State = "blue";
       led3State = "multicolor";
     } else if (led3State == "blue") {
-      leds3[0] = CRGB::Purple;
+      for (int i = 0; i < NUM_LEDS; i++) {
+        leds3[i] = CRGB::Purple;
+      }
       led3State = "purple";
     } else {
       currentColor3 = CRGB::Yellow;
-      leds3[0] = currentColor3;
+      for (int i = 0; i < NUM_LEDS; i++) {
+        leds3[i] = currentColor3;
+      }
       led3State = "multicolor";
     }
 
@@ -189,40 +221,11 @@ void loop() {
 
     if (!climaxAudioSent) sendClimaxAudioMessage();
 
-    // Handle fading effect for LED 1
-    EVERY_N_MILLISECONDS(fadeDuration1 / 255) {
-      fadeStep1++;
-      if (fadeStep1 > 255) {
-        fadeStep1 = 0;
-        targetColor1 = colors[random(0, numColors)];
-        fadeDuration1 = random(1000, 3000);
-      }
-      currentColor1 = blend(currentColor1, targetColor1, fadeStep1);
-      leds1[0] = currentColor1;
-    }
-
-    // Handle fading effect for LED 2
-    EVERY_N_MILLISECONDS(fadeDuration2 / 255) {
-      fadeStep2++;
-      if (fadeStep2 > 255) {
-        fadeStep2 = 0;
-        targetColor2 = colors[random(0, numColors)];
-        fadeDuration2 = random(1000, 3000);
-      }
-      currentColor2 = blend(currentColor2, targetColor2, fadeStep2);
-      leds2[0] = currentColor2;
-    }
-
-    // Handle fading effect for LED 3
-    EVERY_N_MILLISECONDS(fadeDuration3 / 255) {
-      fadeStep3++;
-      if (fadeStep3 > 255) {
-        fadeStep3 = 0;
-        targetColor3 = colors[random(0, numColors)];
-        fadeDuration3 = random(1000, 3000);
-      }
-      currentColor3 = blend(currentColor3, targetColor3, fadeStep3);
-      leds3[0] = currentColor3;
+    for (int i = 0; i < NUM_LEDS; i++) {
+      CRGB color = colors[random(0, numColors)];
+      leds1[i] = color;
+      leds2[i] = color;
+      leds3[i] = color;
     }
 
     // Show the updated colors on all LEDs
@@ -284,14 +287,16 @@ void receiveMessage() {
 void reset(OSCMessage &msg) {
   Serial.println("resetting abejas");
 
-  leds1[0] = CRGB::Black;
-  led1State = "black";
+  for (int i = 0; i < NUM_LEDS; i++) {
+    leds1[i] = CRGB::Black;
+    led1State = "black";
 
-  leds2[0] = CRGB::Black;
-  led2State = "black";
+    leds2[i] = CRGB::Black;
+    led2State = "black";
 
-  leds3[0] = CRGB::Black;
-  led3State = "black";
+    leds3[i] = CRGB::Black;
+    led3State = "black";
+  }
 
   digitalWrite(motor1Pin1, LOW);
   digitalWrite(motor1Pin2, LOW);
