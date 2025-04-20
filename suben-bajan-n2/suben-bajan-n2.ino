@@ -1,3 +1,4 @@
+#include <FastLED.h>
 #include "WiFiS3.h"
 #include <OSCMessage.h>
 #include <SPI.h>
@@ -7,16 +8,17 @@
 
 WiFiUDP Udp;
 int update_rate = 16;  // Update rate for OSC data reception
-char ssid[] = "Innovacion";
-char pass[] = "Innovacion24";
+char ssid[] = "Router_Flora";
+char pass[] = "Flora666";
 // char ssid[] = "WIFIBAU";
 // char pass[] = "bau934153474";
 
 unsigned int localPort = 8881;
 
-IPAddress outIp(192, 168, 0, 119); // mariana innov
+// IPAddress outIp(192, 168, 0, 119); // mariana innov
 // IPAddress outIp(192, 168, 27, 100); // mariana wifi bau
 // IPAddress outIp(192, 168, 0, 124);  // daniela wifi innov
+IPAddress outIp(192, 168, 1, 35);  // mariana wifi Flora_Router
 const unsigned int outPort = 8000;
 
 // los lectores RFID comparten ademas los pines 13, 11, 12, 3.3V, GND
@@ -24,7 +26,14 @@ const unsigned int outPort = 8000;
 #define RST_PIN_3 8
 MFRC522 rfid3(SS_PIN_3, RST_PIN_3);
 
-#define LUZ_3_PIN A5
+// #define LUZ_3_PIN A5
+#define NUM_LEDS_ROCAS 15
+#define LED_PIN_ROCAS_1 6
+#define LED_PIN_ROCAS_2 7
+
+CRGB ledsRocas1[NUM_LEDS_ROCAS];
+CRGB ledsRocas2[NUM_LEDS_ROCAS];
+bool animarRocas = false;
 
 // Motor para segunda y tercera flor que sube y baja
 int motor1Pin1 = 2;
@@ -62,8 +71,14 @@ void setup() {
   pinMode(motor2Pin2, OUTPUT);
   pinMode(motor2Velocidad, OUTPUT);
 
+  SPI.begin();
   rfid3.PCD_Init();
-  pinMode(LUZ_3_PIN, OUTPUT);
+  Serial.println("RFID reader initialized");
+  // pinMode(LUZ_3_PIN, OUTPUT);
+  FastLED.addLeds<NEOPIXEL, LED_PIN_ROCAS_1>(ledsRocas1, NUM_LEDS_ROCAS);
+  FastLED.addLeds<NEOPIXEL, LED_PIN_ROCAS_2>(ledsRocas2, NUM_LEDS_ROCAS);
+  FastLED.clear();
+  FastLED.show();
 
   analogWrite(motor1Velocidad, velocidadMotores);
   analogWrite(motor2Velocidad, velocidadMotores);
@@ -73,12 +88,14 @@ void loop() {
   receiveMessage();
 
   if (rfid3.PICC_IsNewCardPresent()) {
+    Serial.println("new card present");
     if (rfid3.PICC_ReadCardSerial()) {
       Serial.println("segundo nivel caracol");
 
       if (!audioSent) sendAudioMessage();
 
-      digitalWrite(LUZ_3_PIN, HIGH);  // prender las luces nivel 3
+      // digitalWrite(LUZ_3_PIN, HIGH);  // prender las luces nivel 3
+      animarRocas = true;
 
       digitalWrite(motor1Pin1, HIGH);
       digitalWrite(motor1Pin2, LOW);
@@ -89,6 +106,10 @@ void loop() {
       rfid3.PICC_HaltA();
       rfid3.PCD_StopCrypto1();
     }
+  }
+
+  if (animarRocas) {
+    loopLucesRocas();
   }
 
   delay(update_rate);
@@ -136,7 +157,7 @@ void receiveMessage() {
 void reset(OSCMessage &msg) {
   Serial.println("resetting suben bajan");
 
-  digitalWrite(LUZ_3_PIN, LOW);
+  // digitalWrite(LUZ_3_PIN, LOW);
 
   digitalWrite(motor1Pin1, LOW);
   digitalWrite(motor1Pin2, LOW);
@@ -145,4 +166,31 @@ void reset(OSCMessage &msg) {
   digitalWrite(motor2Pin2, LOW);
 
   audioSent = false;
+
+  animarRocas = false;
+  FastLED.clear();  // Instantly turn off LEDs
+  FastLED.show();
+}
+
+void loopLucesRocas() {
+  static unsigned long lastBlinkTime = 0;
+  const unsigned long blinkInterval = 150;
+
+  unsigned long now = millis();
+  if (now - lastBlinkTime >= blinkInterval) {
+    // Turn off the last LED
+    for (int i = 0; i < NUM_LEDS_ROCAS; i++) {
+      ledsRocas1[i] = CRGB::Black;
+      ledsRocas2[i] = CRGB::Black;
+    }
+
+    for (int i = 0; i < NUM_LEDS_ROCAS; i++) {
+      CRGB color = CHSV(random(0, 255), 255, 255);
+      ledsRocas1[i] = color;
+      ledsRocas2[i] = color;
+    }
+
+    FastLED.show();
+    lastBlinkTime = now;
+  }
 }

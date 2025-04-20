@@ -36,11 +36,14 @@ MFRC522 rfid1(SS_PIN_1, RST_PIN_1);
 
 #define NUM_LEDS_RIO 60
 #define LED_PIN_RIO 6
-#define NUM_LEDS_ROCAS 59
-#define LED_PIN_ROCAS 4
+#define NUM_LEDS_ROCAS 15
+#define LED_PIN_ROCAS_1 4
+#define LED_PIN_ROCAS_2 7
 
 CRGB ledsRio[NUM_LEDS_RIO];
-CRGB ledsRocas[NUM_LEDS_ROCAS];
+CRGB ledsRocas1[NUM_LEDS_ROCAS];
+CRGB ledsRocas2[NUM_LEDS_ROCAS];
+
 
 bool animarRio = false;
 bool animarRocas = false;
@@ -51,16 +54,16 @@ void setup() {
   Serial.println("Connecting to wifi...");
 
   WiFi.begin(ssid, pass);
-  // while (WiFi.status() != WL_CONNECTED) {
-  // delay(500);
-  //Serial.println("Retry WiFi connection");
-  //}
+  while (WiFi.status() != WL_CONNECTED) {
+    delay(500);
+    Serial.println("Retry WiFi connection");
+  }
 
-  //Serial.println("WiFi connected");
-  //Serial.println("IP address: ");
-  //Serial.println(WiFi.localIP());
+  Serial.println("WiFi connected");
+  Serial.println("IP address: ");
+  Serial.println(WiFi.localIP());
 
-  //Udp.begin(localPort);
+  Udp.begin(localPort);
 
   sendConnectionMessage();
   SPI.begin();
@@ -71,7 +74,8 @@ void setup() {
   //pinMode(LUZ_1_PIN, OUTPUT);
 
   FastLED.addLeds<NEOPIXEL, LED_PIN_RIO>(ledsRio, NUM_LEDS_RIO);
-  FastLED.addLeds<NEOPIXEL, LED_PIN_ROCAS>(ledsRocas, NUM_LEDS_ROCAS);
+  FastLED.addLeds<NEOPIXEL, LED_PIN_ROCAS_1>(ledsRocas1, NUM_LEDS_ROCAS);
+  FastLED.addLeds<NEOPIXEL, LED_PIN_ROCAS_2>(ledsRocas2, NUM_LEDS_ROCAS);
   FastLED.clear();
   FastLED.show();
 }
@@ -164,48 +168,59 @@ void loopLucesRio() {
   static unsigned long lastUpdate = 0;
   static int index = 0;
   static bool forward = true;
-  const unsigned long interval = 20;
+  const unsigned long interval = 60;  // Slower = smoother
+  const float fadeWidth = 8.0;
 
   if (millis() - lastUpdate >= interval) {
-    // Clear previous LED
-    ledsRio[index] = CRGB::Black;
-
+    // Move the pulse
     if (forward) {
       index++;
-      if (index >= NUM_LEDS_RIO) {
-        index = NUM_LEDS_RIO - 1;
+      if (index >= NUM_LEDS_RIO + fadeWidth) {
+        index = NUM_LEDS_RIO + fadeWidth - 1;
         forward = false;
       }
     } else {
       index--;
-      if (index < 0) {
-        index = 0;
+      if (index < -fadeWidth) {
+        index = -fadeWidth;
         forward = true;
       }
     }
 
-    // Set current LED
-    ledsRio[index] = CRGB::Blue;
+    for (int i = 0; i < NUM_LEDS_RIO; i++) {
+      float distance = abs(i - index);
+      float brightness = 1.0 - (distance / fadeWidth);
+      brightness = constrain(brightness, 0.05, 1.0);  // minimum background glow
+
+      uint8_t r = 20 * brightness;
+      uint8_t g = 100 * brightness;
+      uint8_t b = 250 * brightness;
+
+      ledsRio[i] = CRGB(r, g, b);
+    }
+
     FastLED.show();
     lastUpdate = millis();
   }
 }
 
 void loopLucesRocas() {
-  static int currentIndex = 0;
   static unsigned long lastBlinkTime = 0;
   const unsigned long blinkInterval = 150;
 
   unsigned long now = millis();
   if (now - lastBlinkTime >= blinkInterval) {
     // Turn off the last LED
-    ledsRocas[currentIndex] = CRGB::Black;
+    for (int i = 0; i < NUM_LEDS_ROCAS; i++) {
+      ledsRocas1[i] = CRGB::Black;
+      ledsRocas2[i] = CRGB::Black;
+    }
 
-    // Move to next
-    currentIndex = (currentIndex + 1) % NUM_LEDS_ROCAS;
-
-    // Set a new random color
-    ledsRocas[currentIndex] = CHSV(random(0, 255), 255, 255);
+    for (int i = 0; i < NUM_LEDS_ROCAS; i++) {
+      CRGB color = CHSV(random(0, 255), 255, 255);
+      ledsRocas1[i] = color;
+      ledsRocas2[i] = color;
+    }
 
     FastLED.show();
     lastBlinkTime = now;

@@ -1,3 +1,4 @@
+#include <FastLED.h>
 #include "WiFiS3.h"
 #include <OSCMessage.h>
 
@@ -19,7 +20,13 @@ IPAddress outIp(192, 168, 1, 35);  // mariana wifi Flora_Router
 
 const unsigned int outPort = 8000;
 
-#define LUZ_2_PIN A1
+// #define LUZ_2_PIN A1
+
+#define NUM_LEDS_RIO 60
+#define LED_PIN_RIO 11
+
+CRGB ledsRio[NUM_LEDS_RIO];
+bool animarRio = false;
 
 int pinSensorHumedad = A0;
 int pinReleRio = 8;
@@ -55,7 +62,10 @@ void setup() {
 
   analogWrite(motorPinVelocidad, 100);
 
-  pinMode(LUZ_2_PIN, OUTPUT);
+  // pinMode(LUZ_2_PIN, OUTPUT);
+  FastLED.addLeds<NEOPIXEL, LED_PIN_RIO>(ledsRio, NUM_LEDS_RIO);
+  FastLED.clear();
+  FastLED.show();
 }
 
 void loop() {
@@ -68,9 +78,9 @@ void loop() {
   //Serial.println("in loop");
   receiveMessage();
 
-  //Serial.println(analogRead(pinSensorHumedad));
+  Serial.println(analogRead(pinSensorHumedad));
 
-  if (analogRead(pinSensorHumedad) > 200) {
+  if (analogRead(pinSensorHumedad) > 90) {
     semillaPlantada = true;
   } else {
     semillaPlantada = false;
@@ -84,6 +94,12 @@ void loop() {
     digitalWrite(pinReleRio, HIGH);
     digitalWrite(motorPin1, HIGH);
     digitalWrite(motorPin2, LOW);
+
+    animarRio = true;
+  }
+
+  if (animarRio) {
+    loopLucesRio();
   }
   delay(update_rate);
 }
@@ -134,4 +150,49 @@ void reset(OSCMessage &msg) {
   digitalWrite(pinReleRio, LOW);
   digitalWrite(motorPin1, LOW);
   digitalWrite(motorPin2, LOW);
+
+  animarRio = false;
+
+  FastLED.clear();  // Instantly turn off LEDs
+  FastLED.show();
+}
+
+void loopLucesRio() {
+  static unsigned long lastUpdate = 0;
+  static int index = 0;
+  static bool forward = true;
+  const unsigned long interval = 60;  // Slower = smoother
+  const float fadeWidth = 8.0;
+
+  if (millis() - lastUpdate >= interval) {
+    // Move the pulse
+    if (forward) {
+      index++;
+      if (index >= NUM_LEDS_RIO + fadeWidth) {
+        index = NUM_LEDS_RIO + fadeWidth - 1;
+        forward = false;
+      }
+    } else {
+      index--;
+      if (index < -fadeWidth) {
+        index = -fadeWidth;
+        forward = true;
+      }
+    }
+
+    for (int i = 0; i < NUM_LEDS_RIO; i++) {
+      float distance = abs(i - index);
+      float brightness = 1.0 - (distance / fadeWidth);
+      brightness = constrain(brightness, 0.05, 1.0);  // minimum background glow
+
+      uint8_t r = 20 * brightness;
+      uint8_t g = 100 * brightness;
+      uint8_t b = 250 * brightness;
+
+      ledsRio[i] = CRGB(r, g, b);
+    }
+
+    FastLED.show();
+    lastUpdate = millis();
+  }
 }
