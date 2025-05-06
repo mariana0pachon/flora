@@ -88,7 +88,7 @@ void loop() {
     if (rfid1.PICC_ReadCardSerial()) {
       Serial.println("primer nivel caracol");
 
-      //if (!audioSent) sendAudioMessage();
+      if (!audioSent) sendAudioMessage();
 
       digitalWrite(RELE_RIO_PIN, HIGH);  // prender la bomba del rio nivel 2
       //digitalWrite(LUZ_1_PIN, HIGH);     // prender las luces nivel 1
