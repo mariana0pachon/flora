@@ -4,7 +4,7 @@
 #include "WiFiS3.h"
 #include <OSCMessage.h>
 
-// EL IP DE ESTE ARDUINO ES 192.168.0.111
+// EL IP DE ESTE ARDUINO FIJO EN ROUTER ES 192.168.1.41
 
 WiFiUDP Udp;
 int update_rate = 16;  // Update rate for OSC data reception

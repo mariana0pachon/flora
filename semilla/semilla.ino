@@ -2,7 +2,7 @@
 #include "WiFiS3.h"
 #include <OSCMessage.h>
 
-// EL IP DE ESTE ARDUINO ES 192.168.0.121
+// EL IP DE ESTE ARDUINO FIJO EN ROUTER FLORA ES 192.168.1.37
 
 WiFiUDP Udp;
 int update_rate = 16;  // Update rate for OSC data reception
@@ -11,7 +11,7 @@ char pass[] = "Flora666";
 // char ssid[] = "WIFIBAU";
 // char pass[] = "bau934153474";
 
-unsigned int localPort = 8881;q
+unsigned int localPort = 8881;
 
 // IPAddress outIp(192, 168, 0, 119); // mariana innov
 // IPAddress outIp(192, 168, 27, 100); // mariana wifi bau
@@ -78,9 +78,9 @@ void loop() {
   //Serial.println("in loop");
   receiveMessage();
 
-  Serial.println(analogRead(pinSensorHumedad));
+  //Serial.println(analogRead(pinSensorHumedad));
 
-  if (analogRead(pinSensorHumedad) > 90) {
+  if (analogRead(pinSensorHumedad) > 350) {
     semillaPlantada = true;
   } else {
     semillaPlantada = false;

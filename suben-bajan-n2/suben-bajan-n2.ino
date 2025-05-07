@@ -4,7 +4,7 @@
 #include <SPI.h>
 #include <MFRC522.h>
 
-// EL IP DE ESTE ARDUINO ES 192.168.0.113
+// EL IP DE ESTE ARDUINO FIJO EN ROUTER FLORA ES 192.168.1.39
 
 WiFiUDP Udp;
 int update_rate = 16;  // Update rate for OSC data reception

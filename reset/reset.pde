@@ -18,12 +18,13 @@ void setup() {
 
   oscP5 = new OscP5(this, 12000);
 
-  semilla = new NetAddress("192.168.0.121", 8881);
-  caracol = new NetAddress("192.168.0.102", 8881);
-  abejas = new NetAddress("192.168.0.111", 8881);
-  suben_bajan = new NetAddress("192.168.0.113", 8881);
+  // IPs fijos en router Flora
+  semilla = new NetAddress("192.168.1.37", 8881);
+  caracol = new NetAddress("192.168.1.40", 8881);
+  abejas = new NetAddress("192.168.1.41", 8881);
+  suben_bajan = new NetAddress("192.168.1.39", 8881);
 
-  audioIP = new NetAddress("192.168.0.119", 8000);
+  audioIP = new NetAddress("192.168.1.35", 8000);
 
   textAlign(CENTER, CENTER);
   textSize(24);
@@ -87,6 +88,7 @@ void mousePressed() {
     oscP5.send(myMessage, suben_bajan);
 
     OscMessage audioReset = new OscMessage("/estado0");
+    audioReset.add(0);
     oscP5.send(audioReset, audioIP);
 
     println("reseteando");
