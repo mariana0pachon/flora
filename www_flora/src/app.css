@@ -1,1 +1,14 @@
+@import url('https://fonts.googleapis.com/css2?family=Roboto+Mono&display=swap');
 @import "tailwindcss";
+
+@font-face {
+  font-family: 'Robotic Sensitivity';
+  src: url('/fonts/RoboticSensitivity-Regular.woff2') format('woff2');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+body {
+  font-family: 'Robotic Sensitivity', sans-serif;
+}

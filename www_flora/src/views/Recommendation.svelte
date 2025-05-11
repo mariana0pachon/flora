@@ -1,25 +1,44 @@
 <script>
+  import SkipToMap from "../components/SkipToMap.svelte";
+  import Button from '../components/Button.svelte';
+
   export let goToNextView;
   export let skipToMap;
 </script>
 
-<div class="flex flex-col items-center justify-between min-h-screen py-8">
-  <div class="text-center">
-    <h1 class="text-2xl font-bold mb-4">Welcome</h1>
-    <p class="mb-8">Recommendations</p>
-    <!-- Content goes here -->
+<div class="flex flex-col py-8 px-6 bg-[#BAFF7F] space-y-6">
+  <SkipToMap skipToMap={skipToMap} customClass="text-black"/>
+
+  <!-- Title -->
+  <div class="text-4xl">
+    Recommendations in mind before playing
   </div>
-  
-  <div class="w-full flex flex-col gap-4">
-    <button 
-      on:click={goToNextView}
-      class="w-full py-3 bg-blue-500 text-white font-medium rounded-lg">
-      Continue
-    </button>
-    <button 
-      on:click={skipToMap}
-      class="w-full py-2 text-blue-500">
-      Skip to Map
+
+  <!-- Bullet points -->
+  <ul class="list-disc list-inside space-y-2 text-lg font-mono">
+    <li>Treat each game piece with delicacy and care 💝</li>
+    <li>Always play on top of the board 🙇🏽</li>
+    <li>When you’re done playing, make sure to return everything to where you found it 🫡🌱</li>
+    <li>Have fun and enjoy! 🙈🙉</li>
+  </ul>
+
+<!-- Bottom image and button -->
+<div class="w-full flex flex-col justify-center items-stretch">
+  <!-- Right-aligned image -->
+  <div class="flex justify-end">
+    <img 
+      src="/assets/onboarding/recommendations.png"
+      alt="rocas"
+      class="w-48 h-auto mb-4" 
+    />
+  </div>
+
+  <!-- Centered button -->
+  <div class="flex justify-center">
+    <button on:click={goToNextView} class="focus:outline-none">
+      <Button text="OKAAAAY"/>
     </button>
   </div>
+</div>
+
 </div>

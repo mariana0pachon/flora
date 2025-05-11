@@ -1,19 +1,20 @@
 <script>
   export let goToNextView;
+  import Button from '../components/Button.svelte';
 </script>
 
-<div class="flex flex-col items-center justify-between min-h-screen py-8">
-  <div class="text-center">
-    <h1 class="text-2xl font-bold mb-4">Welcome</h1>
-    <p class="mb-8">Landing</p>
-    <!-- Content goes here -->
-  </div>
-  
-  <div class="w-full flex flex-col gap-4">
-    <button 
-      on:click={goToNextView}
-      class="w-full py-3 bg-blue-500 text-white font-medium rounded-lg">
-      Continue
+<div class="bg-[#01281B] flex flex-col items-center justify-between min-h-screen w-full relative">
+  <!-- Full-screen background image -->
+  <img 
+    src="/assets/portada.png"
+    alt="Landing Page Cover"
+    class="absolute inset-0 w-full h-full object-cover"
+  />
+
+  <!-- Button positioned at the bottom of the screen -->
+  <div class="w-full flex justify-center absolute bottom-22 z-10">
+    <button on:click={goToNextView} class="focus:outline-none">
+      <Button text="LET'S ENTER"/>
     </button>
   </div>
 </div>

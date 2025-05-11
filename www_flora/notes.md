@@ -1,0 +1,6 @@
+- [ ] no scrollear
+- [ ] font no cargaaaa
+- [ ] no es responsive :( testear siempre en mi celular
+- [ ] cargar todos los assets antes de tiempo... al pasar paginas se ve lento
+- [ ] transitions
+- [ ] 
