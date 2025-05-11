@@ -80,7 +80,7 @@ void loop() {
 
   //Serial.println(analogRead(pinSensorHumedad));
 
-  if (analogRead(pinSensorHumedad) > 350) {
+  if (analogRead(pinSensorHumedad) > 100) {
     semillaPlantada = true;
   } else {
     semillaPlantada = false;
